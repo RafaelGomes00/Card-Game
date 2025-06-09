@@ -14,6 +14,8 @@ public class MemoryGameController : MonoBehaviour
     [SerializeField] private GridLayoutGroup cardsGrid;
     [SerializeField] private RectTransform cardsGridRect;
     [SerializeField] private TextMeshProUGUI pointsTxt;
+    [SerializeField] private TextMeshProUGUI handsTxt;
+    [SerializeField] private TextMeshProUGUI matchesTxt;
     [SerializeField] private AudioClip incorrectMatchAudioClip;
     [SerializeField] private AudioClip correctMatchAudioClip;
     [SerializeField] private AudioClip gameOverAudioClip;
@@ -29,6 +31,8 @@ public class MemoryGameController : MonoBehaviour
     public void Start()
     {
         pointsTxt.text = $"Points: {GameData.points}";
+        matchesTxt.text = $"Matches: {GameData.matches}";
+        handsTxt.text = $"Hands: {GameData.hands}";
         InitializeGame();
     }
 
@@ -109,12 +113,14 @@ public class MemoryGameController : MonoBehaviour
     private void CompareCards(Card card1, Card card2)
     {
         selectedCard = null;
+        GameData.UpdateHands();
 
         if (card1.CompareData(card2.cardData)) //Equal cards
         {
             combo++;
             pairsCompleted++;
-            UpdatePoints(100, combo);
+            GameData.UpdateMatches();
+            UpdateData(100, combo);
 
             card1.AnimateCardPair();
             card2.AnimateCardPair();
@@ -124,7 +130,7 @@ public class MemoryGameController : MonoBehaviour
         else //Diferent cards
         {
             combo = 0;
-            UpdatePoints(-100, 1);
+            UpdateData(-100, 1);
 
             card1.HideCardDelayed();
             card2.HideCardDelayed();
@@ -142,10 +148,12 @@ public class MemoryGameController : MonoBehaviour
         }
     }
 
-    private void UpdatePoints(int receivedPoints, int combo)
+    private void UpdateData(int receivedPoints, int combo)
     {
         Instantiate(pointsFeedbackGO, pointsFeedbackParent).SetText(receivedPoints, combo);
         int points = GameData.UpdatePoints(receivedPoints, combo);
         pointsTxt.text = $"Points: {points}";
+        handsTxt.text = $"Hands: {GameData.hands}";
+        matchesTxt.text = $"Matches: {GameData.matches}";
     }
 }

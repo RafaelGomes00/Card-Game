@@ -24,9 +24,8 @@ public class Card : MonoBehaviour
     {
         if (!showing)
         {
-            showing = true;
+            ShowCard();
             onClickCard?.Invoke(this);
-            cardAnimator.SetTrigger("ShowCard");
             SoundController.instance.PlayEffect(flipCardAudioClip);
         }
     }
@@ -42,12 +41,18 @@ public class Card : MonoBehaviour
         return cardData.sprite.GetHashCode() == comparedCard.sprite.GetHashCode();
     }
 
+    public void ShowCard()
+    {
+        cardAnimator.SetTrigger("ShowCard");
+    }
+
     public void HideCardDelayed()
     {
+        showing = true;
         Invoke("HideCard", 2f);
     }
 
-    private void HideCard()
+    public void HideCard()
     {
         showing = false;
         cardAnimator.SetTrigger("HideCard");

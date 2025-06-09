@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 public class MemoryGameController : MonoBehaviour
 {
     [SerializeField] private Card cardGO;
+    [SerializeField] private PointsFeedbackAnimator pointsFeedbackGO;
+    [SerializeField] private Transform pointsFeedbackParent;
     [SerializeField] private GridLayoutGroup cardsGrid;
     [SerializeField] private RectTransform cardsGridRect;
     [SerializeField] private TextMeshProUGUI pointsTxt;
@@ -16,6 +18,7 @@ public class MemoryGameController : MonoBehaviour
     [SerializeField] private AudioClip correctMatchAudioClip;
     [SerializeField] private AudioClip gameOverAudioClip;
     [SerializeField] private GameObject gameOver;
+    [SerializeField] private float showCardsDelay;
     [SerializeField] private CardsHolder cardsHolder;
 
     Card selectedCard;
@@ -39,12 +42,16 @@ public class MemoryGameController : MonoBehaviour
 
         var cardsShuffled = _cards.Shuffle();
 
+        List<Card> instantiatedCards = new List<Card>();
+
         foreach (CardData cardData in cardsShuffled)
         {
             Card newCard = Instantiate(cardGO, cardsGrid.transform);
             newCard.Initialize(cardData, OnCardClicked, this);
+            instantiatedCards.Add(newCard);
         }
 
+        StartCoroutine(ShowCards(instantiatedCards));
         StartCoroutine(DisableLayoutGroupRoutine());
     }
 
@@ -56,6 +63,14 @@ public class MemoryGameController : MonoBehaviour
     public void OnClickMenu()
     {
         SceneManager.LoadScene("Menu");
+    }
+
+    private IEnumerator ShowCards(List<Card> cards)
+    {
+        yield return new WaitForEndOfFrame();
+        foreach (Card card in cards) card.ShowCard();
+        yield return new WaitForSeconds(showCardsDelay);
+        foreach (Card card in cards) card.HideCard();
     }
 
     private void InitializeGame()
@@ -129,6 +144,7 @@ public class MemoryGameController : MonoBehaviour
 
     private void UpdatePoints(int receivedPoints, int combo)
     {
+        Instantiate(pointsFeedbackGO, pointsFeedbackParent).SetText(receivedPoints, combo);
         int points = GameData.UpdatePoints(receivedPoints, combo);
         pointsTxt.text = $"Points: {points}";
     }

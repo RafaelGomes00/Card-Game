@@ -60,20 +60,21 @@ public class MemoryGameController : MonoBehaviour
 
     private void InitializeGame()
     {
-        int nElements = 6;
-        float cellSize = ResolveGridSize(nElements);
+        float cellSize = ResolveGridSize(GameController.instance.rows);
         cardsGrid.cellSize = new Vector2(cellSize, cellSize);
 
-        InitializeCards(cardsHolder.GetCards(6, 6));
-        cardsGrid.constraintCount = 6;
+        InitializeCards(cardsHolder.GetCards(GameController.instance.rows, GameController.instance.columns));
+        cardsGrid.constraintCount = GameController.instance.rows;
         cardsGrid.enabled = true;
         pairsCompleted = 0;
     }
 
     private float ResolveGridSize(int numberOfElements)
     {
-        float xSize = (cardsGridRect.rect.width - ((numberOfElements - 1) * ((cardsGrid.spacing.x / 2) + cardsGrid.padding.left + cardsGrid.padding.right))) / numberOfElements;
-        float ySize = (cardsGridRect.rect.height - ((numberOfElements - 1) * ((cardsGrid.spacing.y / 2) + cardsGrid.padding.top + cardsGrid.padding.bottom))) / numberOfElements;
+        float xSize = Mathf.Clamp((cardsGridRect.rect.width - ((numberOfElements - 1) * ((cardsGrid.spacing.x / 2) + cardsGrid.padding.left + cardsGrid.padding.right))) / numberOfElements, 20, 200);
+        float ySize = Mathf.Clamp((cardsGridRect.rect.height - ((numberOfElements - 1) * ((cardsGrid.spacing.y / 2) + cardsGrid.padding.top + cardsGrid.padding.bottom))) / numberOfElements, 20, 200);
+
+        Debug.Log($"X {xSize} / Y {ySize}");
 
         return xSize < ySize ? xSize : ySize;
     }

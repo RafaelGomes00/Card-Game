@@ -31,6 +31,7 @@ public class Card : MonoBehaviour
         }
     }
 
+    //Triggered through animation events
     public void ToggleCardImage()
     {
         cardImage.enabled = !cardImage.enabled;
@@ -50,6 +51,12 @@ public class Card : MonoBehaviour
     {
         showing = false;
         cardAnimator.SetTrigger("HideCard");
+    }
+
+    public void AnimateCardPair()
+    {
+        cardAnimator.SetTrigger("MatchCard");
+        DestroyCardDelayed();
     }
 
     public void DestroyCardDelayed()

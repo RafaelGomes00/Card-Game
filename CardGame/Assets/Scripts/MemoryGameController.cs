@@ -10,6 +10,7 @@ public class MemoryGameController : MonoBehaviour
 {
     [SerializeField] private Card cardGO;
     [SerializeField] private GridLayoutGroup cardsGrid;
+    [SerializeField] private RectTransform cardsGridRect;
     [SerializeField] private TextMeshProUGUI pointsTxt;
     [SerializeField] private AudioClip incorrectMatchAudioClip;
     [SerializeField] private AudioClip correctMatchAudioClip;
@@ -50,8 +51,6 @@ public class MemoryGameController : MonoBehaviour
     public void OnClickKeepPlaying()
     {
         SceneManager.LoadScene("Game");
-        // gameOver.SetActive(false);
-        // InitializeGame();
     }
 
     public void OnClickMenu()
@@ -61,10 +60,22 @@ public class MemoryGameController : MonoBehaviour
 
     private void InitializeGame()
     {
-        InitializeCards(cardsHolder.GetCards(4, 5));
-        cardsGrid.constraintCount = 4;
+        int nElements = 6;
+        float cellSize = ResolveGridSize(nElements);
+        cardsGrid.cellSize = new Vector2(cellSize, cellSize);
+
+        InitializeCards(cardsHolder.GetCards(6, 6));
+        cardsGrid.constraintCount = 6;
         cardsGrid.enabled = true;
         pairsCompleted = 0;
+    }
+
+    private float ResolveGridSize(int numberOfElements)
+    {
+        float xSize = (cardsGridRect.rect.width - ((numberOfElements - 1) * ((cardsGrid.spacing.x / 2) + cardsGrid.padding.left + cardsGrid.padding.right))) / numberOfElements;
+        float ySize = (cardsGridRect.rect.height - ((numberOfElements - 1) * ((cardsGrid.spacing.y / 2) + cardsGrid.padding.top + cardsGrid.padding.bottom))) / numberOfElements;
+
+        return xSize < ySize ? xSize : ySize;
     }
 
     private IEnumerator DisableLayoutGroupRoutine()
@@ -89,8 +100,8 @@ public class MemoryGameController : MonoBehaviour
             pairsCompleted++;
             UpdatePoints(100, combo);
 
-            card1.DestroyCardDelayed();
-            card2.DestroyCardDelayed();
+            card1.AnimateCardPair();
+            card2.AnimateCardPair();
             SoundController.instance.PlayEffect(correctMatchAudioClip);
             CheckGameCompletion();
         }

@@ -679,6 +679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardGO: {fileID: 6502050164991746615, guid: 6afc3570fcb4bc4459b8db1ccf432eb7, type: 3}
   cardsGrid: {fileID: 5605812014457922827}
+  cardsGridRect: {fileID: 7114164670008010596}
   pointsTxt: {fileID: 577399500080640289}
   incorrectMatchAudioClip: {fileID: 8300000, guid: 6e91e504404f69841a3b9542c657122f, type: 3}
   correctMatchAudioClip: {fileID: 8300000, guid: 6aad2c7c9043d2b4292e15232940950d, type: 3}
@@ -1542,10 +1543,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 10
+    m_Right: 10
+    m_Top: 10
+    m_Bottom: 10
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0

@@ -7,10 +7,14 @@ using TMPro;
 
 public class MemoryGameController : MonoBehaviour
 {
-    [SerializeField] Card cardGO;
-    [SerializeField] GridLayoutGroup cardsGrid;
-    [SerializeField] TextMeshProUGUI pointsTxt;
-    [SerializeField] CardsHolder cardsHolder;
+    [SerializeField] private Card cardGO;
+    [SerializeField] private GridLayoutGroup cardsGrid;
+    [SerializeField] private TextMeshProUGUI pointsTxt;
+    [SerializeField] private AudioClip incorrectMatchAudioClip;
+    [SerializeField] private AudioClip correctMatchAudioClip;
+    [SerializeField] private AudioClip gameOverAudioClip;
+    [SerializeField] private GameObject gameOver;
+    [SerializeField] private CardsHolder cardsHolder;
 
     Card selectedCard;
     int points;
@@ -63,12 +67,24 @@ public class MemoryGameController : MonoBehaviour
             UpdatePoints();
             card1.DestroyCardDelayed();
             card2.DestroyCardDelayed();
+            SoundController.instance.PlayEffect(correctMatchAudioClip);
+            CheckGameCompletion();
         }
         else //Diferent cards
         {
             combo = 0;
             card1.HideCardDelayed();
             card2.HideCardDelayed();
+            SoundController.instance.PlayEffect(incorrectMatchAudioClip);
+        }
+    }
+
+    private void CheckGameCompletion()
+    {
+        if (cardsGrid.transform.childCount == 0)
+        {
+            SoundController.instance.PlayEffect(gameOverAudioClip);
+            gameOver.SetActive(true);
         }
     }
 

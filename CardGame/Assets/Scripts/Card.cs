@@ -6,6 +6,7 @@ public class Card : MonoBehaviour
 {
     [SerializeField] Image cardImage;
     [SerializeField] Animator cardAnimator;
+    [SerializeField] AudioClip flipCardAudioClip;
 
     public CardData cardData { get; private set; }
 
@@ -26,6 +27,7 @@ public class Card : MonoBehaviour
             showing = true;
             onClickCard?.Invoke(this);
             cardAnimator.SetTrigger("ShowCard");
+            SoundController.instance.PlayEffect(flipCardAudioClip);
         }
     }
 

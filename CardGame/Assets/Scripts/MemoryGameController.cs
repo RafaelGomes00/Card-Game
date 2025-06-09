@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class MemoryGameController : MonoBehaviour
 {
@@ -17,19 +18,20 @@ public class MemoryGameController : MonoBehaviour
     [SerializeField] private CardsHolder cardsHolder;
 
     Card selectedCard;
-    int points;
     int combo = 0;
+    int totalPairs;
+    int pairsCompleted;
 
     public void Start()
     {
-        pointsTxt.text = $"Points: {points}";
-        InitializeCards(cardsHolder.GetCards(4, 5));
-        cardsGrid.constraintCount = 4;
+        pointsTxt.text = $"Points: {GameData.points}";
+        InitializeGame();
     }
 
     public void InitializeCards(List<CardData> cards)
     {
         List<CardData> _cards = new List<CardData>();
+        totalPairs = cards.Count;
 
         _cards.AddRange(cards);
         _cards.AddRange(cards);
@@ -43,6 +45,26 @@ public class MemoryGameController : MonoBehaviour
         }
 
         StartCoroutine(DisableLayoutGroupRoutine());
+    }
+
+    public void OnClickKeepPlaying()
+    {
+        SceneManager.LoadScene("Game");
+        // gameOver.SetActive(false);
+        // InitializeGame();
+    }
+
+    public void OnClickMenu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    private void InitializeGame()
+    {
+        InitializeCards(cardsHolder.GetCards(4, 5));
+        cardsGrid.constraintCount = 4;
+        cardsGrid.enabled = true;
+        pairsCompleted = 0;
     }
 
     private IEnumerator DisableLayoutGroupRoutine()
@@ -64,7 +86,9 @@ public class MemoryGameController : MonoBehaviour
         if (card1.CompareData(card2.cardData)) //Equal cards
         {
             combo++;
-            UpdatePoints();
+            pairsCompleted++;
+            UpdatePoints(100, combo);
+
             card1.DestroyCardDelayed();
             card2.DestroyCardDelayed();
             SoundController.instance.PlayEffect(correctMatchAudioClip);
@@ -73,6 +97,8 @@ public class MemoryGameController : MonoBehaviour
         else //Diferent cards
         {
             combo = 0;
+            UpdatePoints(-100, 1);
+
             card1.HideCardDelayed();
             card2.HideCardDelayed();
             SoundController.instance.PlayEffect(incorrectMatchAudioClip);
@@ -81,22 +107,17 @@ public class MemoryGameController : MonoBehaviour
 
     private void CheckGameCompletion()
     {
-        if (cardsGrid.transform.childCount == 0)
+        if (pairsCompleted == totalPairs)
         {
+            GameData.SaveText();
             SoundController.instance.PlayEffect(gameOverAudioClip);
             gameOver.SetActive(true);
         }
     }
 
-    private void UpdatePoints()
+    private void UpdatePoints(int receivedPoints, int combo)
     {
-        points += 100 * combo;
+        int points = GameData.UpdatePoints(receivedPoints, combo);
         pointsTxt.text = $"Points: {points}";
-    }
-
-    private void OnCardFlipped()
-    {
-        // if (flippedCards.Count < MAX_FLIP_COUNT) return;
-        // StartCoroutine(CheckAndRemoveCards());
     }
 }

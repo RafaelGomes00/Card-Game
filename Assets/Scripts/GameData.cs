@@ -12,18 +12,42 @@ public static class GameData
     public static int hands { get; private set; }
     public static int matches { get; private set; }
 
+    public static bool loadedInfo { get; private set; }
+
     public static void InitializeData()
     {
         string path = $"{Application.persistentDataPath}/{ASSET_PATH}/Save.txt";
 
         if (!File.Exists(path))
         {
+            loadedInfo = false;
             return;
         }
 
-        SaveData savedData = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
-        GameController.instance.LoadSavedData(savedData.combo, savedData.rows, savedData.columns, savedData.instantiatedCardIndentifiers, savedData.matchedCardsIdentifiers);
-    }   
+        try
+        {
+            SaveData savedData = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
+
+            points = savedData.points;
+            hands = savedData.handsPlayed;
+            matches = savedData.matchesDone;
+
+            GameController.instance.LoadSavedData(savedData.combo, savedData.rows, savedData.columns, savedData.instantiatedCardIndentifiers, savedData.matchedCardsIdentifiers);
+            loadedInfo = true;
+        }
+        catch
+        {
+            Debug.LogError("Error reading data from save file.");
+            loadedInfo = false;
+        }
+    }
+
+    public static void DeleteData()
+    {
+        points = 0;
+        hands = 0;
+        matches = 0;
+    }
 
     public static void Save(List<string> instantiatedCards, List<string> matchedCards, int combo, int rows, int columns)
     {
@@ -45,9 +69,6 @@ public static class GameData
             Directory.CreateDirectory(path);
 
         File.WriteAllText(path + "/Save.txt", JsonUtility.ToJson(saveData));
-
-        Debug.Log(saveData.points);
-        Debug.Log($"Saved {JsonUtility.ToJson(saveData)}");
     }
 
     public static int UpdatePoints(int receivedPoints, int combo)

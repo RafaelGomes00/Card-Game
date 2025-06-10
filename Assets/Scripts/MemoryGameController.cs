@@ -116,7 +116,11 @@ public class MemoryGameController : MonoBehaviour
 
     private void RestoreBoard(List<string> loadedCardIdentifiers, List<string> loadedMatchedCardsIdentifiers)
     {
-        InitializeCards(cardsHolder.GetCards(loadedCardIdentifiers), loadedMatchedCardsIdentifiers);
+        if (loadedCardIdentifiers.Count > 0)
+            InitializeCards(cardsHolder.GetCards(loadedCardIdentifiers), loadedMatchedCardsIdentifiers);
+        else
+            InitializeCards(cardsHolder.GetCards(GameController.instance.rows, GameController.instance.columns));
+
         float cellSize = ResolveGridSize();
         cardsGrid.cellSize = new Vector2(cellSize, cellSize);
 

@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
@@ -11,14 +10,13 @@ public class MenuController : MonoBehaviour
     [SerializeField] TextMeshProUGUI warningTxt;
     [SerializeField] TMP_Dropdown rowsDropdown;
     [SerializeField] TMP_Dropdown columnsDropdown;
+    [SerializeField] Button continueButton;
 
     [SerializeField] int[] cardValues;
     private void Start()
     {
         GameData.InitializeData();
-
-        GameController.instance.SetRows(cardValues[0]);
-        GameController.instance.SetColumns(cardValues[0]);
+        continueButton.interactable = GameData.loadedInfo; // If there is no data saved, the continue button will disable itself.
 
         rowsDropdown.value = PlayerPrefs.GetInt("Rows", 0);
         columnsDropdown.value = PlayerPrefs.GetInt("Columns", 0);
@@ -28,28 +26,30 @@ public class MenuController : MonoBehaviour
         matchesTxt.text = $"Matches: {GameData.matches}";
     }
 
-    public void OnClickStart()
+    public void OnClickStartNewGame()
     {
-        SceneManager.LoadScene("Game");
+        GameData.DeleteData();
+        GameController.instance.SetRows(cardValues[rowsDropdown.value]);
+        GameController.instance.SetColumns(cardValues[columnsDropdown.value]);
+        GameController.instance.StartNewGame(cardValues[rowsDropdown.value], cardValues[columnsDropdown.value]);
+    }
+
+    public void OnClickStartLoadedGame()
+    {
+        GameController.instance.StartLoadedGame();
     }
 
     public void SetRows(int dropdownValue)
     {
         PlayerPrefs.SetInt("Rows", dropdownValue);
-        GameController.instance.SetRows(cardValues[dropdownValue]);
-
-        CheckOddNumbers();
     }
 
     public void SetColumns(int dropdownValue)
     {
         PlayerPrefs.SetInt("Columns", dropdownValue);
-        GameController.instance.SetColumns(cardValues[dropdownValue]);
-
-        CheckOddNumbers();
     }
 
-    private void CheckOddNumbers()
+    public void CheckOddNumbers()
     {
         if (cardValues[rowsDropdown.value] % 2 != 0 && cardValues[columnsDropdown.value] % 2 != 0) warningTxt.gameObject.SetActive(true);
         else warningTxt.gameObject.SetActive(false);

@@ -4038,18 +4038,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &4027168148110555552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8557834083795768104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!81 &6133980178512924739
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4135,7 +4123,6 @@ GameObject:
   - component: {fileID: 1405611949260901031}
   - component: {fileID: 7238314298571376767}
   - component: {fileID: 6133980178512924739}
-  - component: {fileID: 4027168148110555552}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera

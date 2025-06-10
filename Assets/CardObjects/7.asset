@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: 7
   m_EditorClassIdentifier: 
   card: {fileID: 21300000, guid: b416145d20baa364598d07e1740ae2fb, type: 3}
-  identifier: 23192
+  identifier: fish

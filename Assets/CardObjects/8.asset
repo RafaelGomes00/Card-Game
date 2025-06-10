@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: 8
   m_EditorClassIdentifier: 
   card: {fileID: 21300000, guid: 1200fd4c89ff9654483fdc0805358f5e, type: 3}
-  identifier: 23194
+  identifier: gem

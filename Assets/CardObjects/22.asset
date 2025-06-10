@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1da3277a2e6d84f4fa3e5b71995a4dbc, type: 3}
-  m_Name: 23
+  m_Name: 22
   m_EditorClassIdentifier: 
   card: {fileID: 21300000, guid: 63af52b5b92b10c4594f1085a1a0ab94, type: 3}
-  identifier: 23222
+  identifier: log

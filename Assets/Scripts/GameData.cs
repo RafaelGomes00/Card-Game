@@ -47,6 +47,7 @@ public static class GameData
         points = 0;
         hands = 0;
         matches = 0;
+        File.Delete($"{Application.persistentDataPath}/{ASSET_PATH}/Save.txt");
     }
 
     public static void Save(List<string> instantiatedCards, List<string> matchedCards, int combo, int rows, int columns)

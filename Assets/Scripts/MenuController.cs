@@ -8,6 +8,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] TextMeshProUGUI pointsTxt;
     [SerializeField] TextMeshProUGUI handsTxt;
     [SerializeField] TextMeshProUGUI matchesTxt;
+    [SerializeField] TextMeshProUGUI warningTxt;
     [SerializeField] TMP_Dropdown rowsDropdown;
     [SerializeField] TMP_Dropdown columnsDropdown;
 
@@ -36,11 +37,21 @@ public class MenuController : MonoBehaviour
     {
         PlayerPrefs.SetInt("Rows", dropdownValue);
         GameController.instance.SetRows(cardValues[dropdownValue]);
+
+        CheckOddNumbers();
     }
 
     public void SetColumns(int dropdownValue)
     {
         PlayerPrefs.SetInt("Columns", dropdownValue);
         GameController.instance.SetColumns(cardValues[dropdownValue]);
+
+        CheckOddNumbers();
+    }
+
+    private void CheckOddNumbers()
+    {
+        if (cardValues[rowsDropdown.value] % 2 != 0 && cardValues[columnsDropdown.value] % 2 != 0) warningTxt.gameObject.SetActive(true);
+        else warningTxt.gameObject.SetActive(false);
     }
 }

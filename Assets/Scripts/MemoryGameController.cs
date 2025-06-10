@@ -79,7 +79,7 @@ public class MemoryGameController : MonoBehaviour
 
     private void InitializeGame()
     {
-        float cellSize = ResolveGridSize(GameController.instance.rows);
+        float cellSize = ResolveGridSize();
         cardsGrid.cellSize = new Vector2(cellSize, cellSize);
 
         InitializeCards(cardsHolder.GetCards(GameController.instance.rows, GameController.instance.columns));
@@ -88,11 +88,11 @@ public class MemoryGameController : MonoBehaviour
         pairsCompleted = 0;
     }
 
-    private float ResolveGridSize(int numberOfElements)
+    private float ResolveGridSize()
     {
-        float xSize = Mathf.Clamp((cardsGridRect.rect.width - (numberOfElements * (cardsGrid.spacing.x + cardsGrid.padding.left + cardsGrid.padding.right))) / GameController.instance.rows, 20, 200);
-        float ySize = Mathf.Clamp((cardsGridRect.rect.height - (numberOfElements * (cardsGrid.spacing.y + cardsGrid.padding.top + cardsGrid.padding.bottom))) / GameController.instance.columns, 20, 200);
-        
+        float xSize = Mathf.Clamp((cardsGridRect.rect.width - ((GameController.instance.columns - 1) * cardsGrid.spacing.x) - cardsGrid.padding.left - cardsGrid.padding.right) / GameController.instance.columns, 20, 200);
+        float ySize = Mathf.Clamp((cardsGridRect.rect.height - ((GameController.instance.rows - 1) * cardsGrid.spacing.y) - cardsGrid.padding.top - cardsGrid.padding.bottom) / GameController.instance.rows, 20, 200);
+
         return xSize < ySize ? xSize : ySize;
     }
 

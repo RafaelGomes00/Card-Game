@@ -9,13 +9,18 @@ using UnityEngine.SceneManagement;
 public class MemoryGameController : MonoBehaviour
 {
     [SerializeField] private Card cardGO;
+    [SerializeField] private PointsFeedbackAnimator pointsFeedbackGO;
+    [SerializeField] private Transform pointsFeedbackParent;
     [SerializeField] private GridLayoutGroup cardsGrid;
     [SerializeField] private RectTransform cardsGridRect;
     [SerializeField] private TextMeshProUGUI pointsTxt;
+    [SerializeField] private TextMeshProUGUI handsTxt;
+    [SerializeField] private TextMeshProUGUI matchesTxt;
     [SerializeField] private AudioClip incorrectMatchAudioClip;
     [SerializeField] private AudioClip correctMatchAudioClip;
     [SerializeField] private AudioClip gameOverAudioClip;
     [SerializeField] private GameObject gameOver;
+    [SerializeField] private float showCardsDelay;
     [SerializeField] private CardsHolder cardsHolder;
 
     Card selectedCard;
@@ -26,6 +31,8 @@ public class MemoryGameController : MonoBehaviour
     public void Start()
     {
         pointsTxt.text = $"Points: {GameData.points}";
+        matchesTxt.text = $"Matches: {GameData.matches}";
+        handsTxt.text = $"Hands: {GameData.hands}";
         InitializeGame();
     }
 
@@ -39,12 +46,16 @@ public class MemoryGameController : MonoBehaviour
 
         var cardsShuffled = _cards.Shuffle();
 
+        List<Card> instantiatedCards = new List<Card>();
+
         foreach (CardData cardData in cardsShuffled)
         {
             Card newCard = Instantiate(cardGO, cardsGrid.transform);
             newCard.Initialize(cardData, OnCardClicked, this);
+            instantiatedCards.Add(newCard);
         }
 
+        StartCoroutine(ShowCards(instantiatedCards));
         StartCoroutine(DisableLayoutGroupRoutine());
     }
 
@@ -56,6 +67,14 @@ public class MemoryGameController : MonoBehaviour
     public void OnClickMenu()
     {
         SceneManager.LoadScene("Menu");
+    }
+
+    private IEnumerator ShowCards(List<Card> cards)
+    {
+        yield return new WaitForEndOfFrame();
+        foreach (Card card in cards) card.ShowCard();
+        yield return new WaitForSeconds(showCardsDelay);
+        foreach (Card card in cards) card.HideCard();
     }
 
     private void InitializeGame()
@@ -71,11 +90,9 @@ public class MemoryGameController : MonoBehaviour
 
     private float ResolveGridSize(int numberOfElements)
     {
-        float xSize = Mathf.Clamp((cardsGridRect.rect.width - ((numberOfElements - 1) * ((cardsGrid.spacing.x / 2) + cardsGrid.padding.left + cardsGrid.padding.right))) / numberOfElements, 20, 200);
-        float ySize = Mathf.Clamp((cardsGridRect.rect.height - ((numberOfElements - 1) * ((cardsGrid.spacing.y / 2) + cardsGrid.padding.top + cardsGrid.padding.bottom))) / numberOfElements, 20, 200);
-
-        Debug.Log($"X {xSize} / Y {ySize}");
-
+        float xSize = Mathf.Clamp((cardsGridRect.rect.width - (numberOfElements * (cardsGrid.spacing.x + cardsGrid.padding.left + cardsGrid.padding.right))) / GameController.instance.rows, 20, 200);
+        float ySize = Mathf.Clamp((cardsGridRect.rect.height - (numberOfElements * (cardsGrid.spacing.y + cardsGrid.padding.top + cardsGrid.padding.bottom))) / GameController.instance.columns, 20, 200);
+        
         return xSize < ySize ? xSize : ySize;
     }
 
@@ -94,12 +111,14 @@ public class MemoryGameController : MonoBehaviour
     private void CompareCards(Card card1, Card card2)
     {
         selectedCard = null;
+        GameData.UpdateHands();
 
         if (card1.CompareData(card2.cardData)) //Equal cards
         {
             combo++;
             pairsCompleted++;
-            UpdatePoints(100, combo);
+            GameData.UpdateMatches();
+            UpdateData(100, combo);
 
             card1.AnimateCardPair();
             card2.AnimateCardPair();
@@ -109,7 +128,7 @@ public class MemoryGameController : MonoBehaviour
         else //Diferent cards
         {
             combo = 0;
-            UpdatePoints(-100, 1);
+            UpdateData(-100, 1);
 
             card1.HideCardDelayed();
             card2.HideCardDelayed();
@@ -127,9 +146,12 @@ public class MemoryGameController : MonoBehaviour
         }
     }
 
-    private void UpdatePoints(int receivedPoints, int combo)
+    private void UpdateData(int receivedPoints, int combo)
     {
+        Instantiate(pointsFeedbackGO, pointsFeedbackParent).SetText(receivedPoints, combo);
         int points = GameData.UpdatePoints(receivedPoints, combo);
         pointsTxt.text = $"Points: {points}";
+        handsTxt.text = $"Hands: {GameData.hands}";
+        matchesTxt.text = $"Matches: {GameData.matches}";
     }
 }

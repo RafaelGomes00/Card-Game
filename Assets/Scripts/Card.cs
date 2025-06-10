@@ -43,12 +43,12 @@ public class Card : MonoBehaviour
 
     public void ShowCard()
     {
+        showing = true;
         cardAnimator.SetTrigger("ShowCard");
     }
 
     public void HideCardDelayed()
     {
-        showing = true;
         Invoke("HideCard", 2f);
     }
 

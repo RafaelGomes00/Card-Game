@@ -90,11 +90,9 @@ public class MemoryGameController : MonoBehaviour
 
     private float ResolveGridSize(int numberOfElements)
     {
-        float xSize = Mathf.Clamp((cardsGridRect.rect.width - ((numberOfElements - 1) * ((cardsGrid.spacing.x / 2) + cardsGrid.padding.left + cardsGrid.padding.right))) / numberOfElements, 20, 200);
-        float ySize = Mathf.Clamp((cardsGridRect.rect.height - ((numberOfElements - 1) * ((cardsGrid.spacing.y / 2) + cardsGrid.padding.top + cardsGrid.padding.bottom))) / numberOfElements, 20, 200);
-
-        Debug.Log($"X {xSize} / Y {ySize}");
-
+        float xSize = Mathf.Clamp((cardsGridRect.rect.width - (numberOfElements * (cardsGrid.spacing.x + cardsGrid.padding.left + cardsGrid.padding.right))) / GameController.instance.rows, 20, 200);
+        float ySize = Mathf.Clamp((cardsGridRect.rect.height - (numberOfElements * (cardsGrid.spacing.y + cardsGrid.padding.top + cardsGrid.padding.bottom))) / GameController.instance.columns, 20, 200);
+        
         return xSize < ySize ? xSize : ySize;
     }
 

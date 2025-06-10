@@ -38,13 +38,13 @@ public class Card : MonoBehaviour
 
     public bool CompareData(CardData comparedCard)
     {
-        return cardData.sprite.GetHashCode() == comparedCard.sprite.GetHashCode();
+        return cardData.identifier == comparedCard.identifier;
     }
 
     public void ShowCard()
     {
         showing = true;
-        cardAnimator.SetTrigger("ShowCard");
+        cardAnimator?.SetTrigger("ShowCard");
     }
 
     public void HideCardDelayed()
@@ -55,12 +55,12 @@ public class Card : MonoBehaviour
     public void HideCard()
     {
         showing = false;
-        cardAnimator.SetTrigger("HideCard");
+        cardAnimator?.SetTrigger("HideCard");
     }
 
     public void AnimateCardPair()
     {
-        cardAnimator.SetTrigger("MatchCard");
+        cardAnimator?.SetTrigger("MatchCard");
         DestroyCardDelayed();
     }
 

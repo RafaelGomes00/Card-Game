@@ -17,9 +17,6 @@ public class MenuController : MonoBehaviour
     {
         GameData.InitializeData();
 
-        GameController.instance.SetRows(cardValues[0]);
-        GameController.instance.SetColumns(cardValues[0]);
-
         rowsDropdown.value = PlayerPrefs.GetInt("Rows", 0);
         columnsDropdown.value = PlayerPrefs.GetInt("Columns", 0);
 
@@ -28,9 +25,14 @@ public class MenuController : MonoBehaviour
         matchesTxt.text = $"Matches: {GameData.matches}";
     }
 
-    public void OnClickStart()
+    public void OnClickStartNewGame()
     {
-        SceneManager.LoadScene("Game");
+        GameController.instance.StartNewGame(cardValues[rowsDropdown.value], cardValues[columnsDropdown.value]);
+    }
+
+    public void OnClickStartLoadedGame()
+    {
+        GameController.instance.StartLoadedGame();
     }
 
     public void SetRows(int dropdownValue)

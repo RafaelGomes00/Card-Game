@@ -6,7 +6,7 @@ using System;
 [System.Serializable]
 public class CardsHolder
 {
-    [SerializeField] List<Sprite> cardImages;
+    [SerializeField] List<CardsInfoHolder> cards;
 
     public List<CardData> GetCards(int rows, int columns)
     {
@@ -18,11 +18,34 @@ public class CardsHolder
             CardData sorted;
             do
             {
-                sorted = new CardData(cardImages[UnityEngine.Random.Range(0, cardImages.Count)]);
+                sorted = cards[UnityEngine.Random.Range(0, cards.Count)].GetCardData();
             } while (ops.Contains(sorted));
             ops.Add(sorted);
         }
 
         return ops;
+    }
+
+    public CardData GetCardByIdentifier(string identifier)
+    {
+        CardsInfoHolder data = cards.Find(x => x.identifier.Contains(identifier));
+
+        if (data != null)
+            return data.GetCardData();
+
+        Debug.LogError($"Card of identifier {identifier} was not found, returning empty CardData.");
+        return new CardData();
+    }
+
+    public List<CardData> GetCards(List<string> loadedCardIdentifiers)
+    {
+        List<CardData> loadedCards = new List<CardData>();
+
+        foreach (string id in loadedCardIdentifiers)
+        {
+            loadedCards.Add(GetCardByIdentifier(id));
+        }
+
+        return loadedCards;
     }
 }

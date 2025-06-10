@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    //New game settings
     public int rows { get; private set; }
     public int columns { get; private set; }
     public int combo { get; private set; }

@@ -45,11 +45,11 @@ public class MemoryGameController : MonoBehaviour
         }
         else
         {
-            InitializeGame();
+            InitializeNewGame();
         }
     }
 
-    public void InitializeCards(List<CardData> cards) //Initializing cards from new game
+    public void InitializeCards(List<CardData> cards) //Initialize cards from new game
     {
         List<CardData> _cards = new List<CardData>();
         totalPairs = cards.Count;
@@ -65,7 +65,7 @@ public class MemoryGameController : MonoBehaviour
         StartCoroutine(DisableLayoutGroupRoutine());
     }
 
-    public void InitializeCards(List<CardData> cards, List<string> loadedMatchedCards) //Initializing cards from loaded game
+    public void InitializeCards(List<CardData> cards, List<string> loadedMatchedCards) //Initialize cards from loaded game
     {
         List<Card> instantiatedCards = InstantiateCards(cards);
         totalPairs = cards.Count / 2;
@@ -99,6 +99,7 @@ public class MemoryGameController : MonoBehaviour
         return instantiatedCards;
     }
 
+    //Destroy previous found matches when loading the game
     private void DestroyLoadedMatchedCards(List<Card> instantiatedCards, List<string> loadedMatchedCards)
     {
         foreach (Card card in instantiatedCards)
@@ -114,6 +115,7 @@ public class MemoryGameController : MonoBehaviour
         }
     }
 
+    //Restore saved board
     private void RestoreBoard(List<string> loadedCardIdentifiers, List<string> loadedMatchedCardsIdentifiers)
     {
         if (loadedCardIdentifiers.Count > 0)
@@ -129,6 +131,7 @@ public class MemoryGameController : MonoBehaviour
         cardsGrid.enabled = true;
     }
 
+    //Show the cards at the start of the minigame
     private IEnumerator ShowCards(List<Card> cards)
     {
         yield return new WaitForEndOfFrame();
@@ -137,7 +140,7 @@ public class MemoryGameController : MonoBehaviour
         foreach (Card card in cards) if (card != null) card.HideCard();
     }
 
-    private void InitializeGame()
+    private void InitializeNewGame()
     {
         float cellSize = ResolveGridSize();
         cardsGrid.cellSize = new Vector2(cellSize, cellSize);
@@ -148,6 +151,7 @@ public class MemoryGameController : MonoBehaviour
         pairsCompleted = 0;
     }
 
+    //Increase or decrease size of the cards based on number of elements present on the board
     private float ResolveGridSize()
     {
         float xSize = Mathf.Clamp((cardsGridRect.rect.width - ((GameController.instance.columns - 1) * cardsGrid.spacing.x) - cardsGrid.padding.left - cardsGrid.padding.right) / GameController.instance.columns, 20, 200);
@@ -156,6 +160,7 @@ public class MemoryGameController : MonoBehaviour
         return xSize < ySize ? xSize : ySize;
     }
 
+    //Disable grid layout group component to make the cards static
     private IEnumerator DisableLayoutGroupRoutine(List<Card> instantiatedCards = null, List<string> loadedMatchedCards = null, Action<List<Card>, List<string>> onDisabledCallback = null)
     {
         yield return new WaitForEndOfFrame();
@@ -174,22 +179,24 @@ public class MemoryGameController : MonoBehaviour
         selectedCard = null;
         GameData.UpdateHands();
 
-        if (card1.CompareData(card2.cardData)) //Equal cards
+        if (card1.CompareData(card2.cardData)) //Cards drawn are equal
         {
             combo++;
             pairsCompleted++;
+
             GameData.UpdateMatches();
             UpdateData(100, combo);
 
             card1.AnimateCardPair();
             card2.AnimateCardPair();
+
             SoundController.instance.PlayEffect(correctMatchAudioClip);
 
             matchedCardsIdentifiers.Add(card1.cardData.identifier);
             SaveBoard();
             CheckGameCompletion();
         }
-        else //Diferent cards
+        else //Cards drawn are different
         {
             combo = 0;
             UpdateData(-100, 1);
@@ -215,7 +222,7 @@ public class MemoryGameController : MonoBehaviour
         }
     }
 
-    private void UpdateData(int receivedPoints, int combo)
+    private void UpdateData(int receivedPoints, int combo) //Update GameData and instantiate a points given or lost feedback
     {
         Instantiate(pointsFeedbackGO, pointsFeedbackParent).SetText(receivedPoints, combo);
         int points = GameData.UpdatePoints(receivedPoints, combo);
